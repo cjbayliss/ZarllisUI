@@ -165,3 +165,25 @@ TalkingHead_LoadUI()
 hooksecurefunc('TalkingHeadFrame_PlayCurrent', function()
     TalkingHeadFrame_CloseImmediately()
 end)
+
+-- SECTION: auto repair and auto sell junk
+local AutoRepairAndVendorFrame = CreateFrame('Frame')
+AutoRepairAndVendorFrame:RegisterEvent('MERCHANT_SHOW')
+AutoRepairAndVendorFrame:SetScript('OnEvent', function(self, event)
+    -- auto vendor
+    for bag = 0, 4, 1 do
+        for slot = 1, GetContainerNumSlots(bag), 1 do
+            local name = GetContainerItemLink(bag, slot)
+            if name and string.find(name, 'ff9d9d9d') then
+                UseContainerItem(bag, slot)
+            end
+        end
+    end
+
+    -- auto repair
+    if CanMerchantRepair() then
+        if GetMoney() > (GetRepairAllCost() or 0) then
+            RepairAllItems()
+        end
+    end
+end)
