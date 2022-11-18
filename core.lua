@@ -1,9 +1,6 @@
 -- SECTION: show FPS by default
 ToggleFramerate()
 
--- SECTION: hide the bag bar and art
-MicroButtonAndBagsBar:Hide()
-
 -- SECTION: Classic style fade in/out
 CHAT_TAB_SHOW_DELAY = 0
 CHAT_FRAME_FADE_TIME = 1
