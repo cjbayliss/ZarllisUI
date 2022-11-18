@@ -14,7 +14,9 @@ CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA = 0
 local hideExpansionButton = CreateFrame('frame')
 hideExpansionButton:RegisterEvent('GARRISON_SHOW_LANDING_PAGE')
 hideExpansionButton:SetScript('OnEvent', function(self, event)
-    ExpansionLandingPageMinimapButton:Hide()
+    if not InCombatLockdown() then
+        ExpansionLandingPageMinimapButton:Hide()
+    end
 end)
 
 -- SECTION: better partyframe buffs
@@ -36,7 +38,7 @@ local function createBuffFrames(frame)
             end
 
             -- show cooldown numbers, set a resonable size for buffs and font
-            local currentFrameScale = min(EditModeManagerFrame:GetRaidFrameHeight(frame) / 36,  EditModeManagerFrame:GetRaidFrameWidth(frame) / 72)
+            local currentFrameScale = min(EditModeManagerFrame:GetRaidFrameHeight(frame) / 36, EditModeManagerFrame:GetRaidFrameWidth(frame) / 72)
             local buffSize = 14 * currentFrameScale
             local fontSize = 8 * currentFrameScale
             _G[frameName .. i].cooldown:SetHideCountdownNumbers(false)
@@ -48,36 +50,40 @@ local function createBuffFrames(frame)
     end
 end
 
-hooksecurefunc('CompactUnitFrame_UpdateAuras', createBuffFrames)
+hooksecurefunc('CompactUnitFrame_SetUpFrame', createBuffFrames)
 
 -- SECTION: disable world quest UI (still shows on map/minimap)
-TalkingHeadFrame:Reset()
+-- TalkingHeadFrame:Reset()
 WORLD_QUEST_TRACKER_MODULE.ShowWorldQuests = false
 hooksecurefunc('QuestUtils_IsQuestWorldQuest', function()
-    ObjectiveTrackerBonusBannerFrame:Hide()
-    TalkingHeadFrame:CloseImmediately()
+    if not InCombatLockdown() then
+        ObjectiveTrackerBonusBannerFrame:Hide()
+        TalkingHeadFrame:CloseImmediately()
+    end
 end)
 
 -- SECTION: auto repair and auto sell junk
 local AutoRepairAndVendorFrame = CreateFrame('frame')
 AutoRepairAndVendorFrame:RegisterEvent('MERCHANT_SHOW')
 AutoRepairAndVendorFrame:SetScript('OnEvent', function(self, event)
-    -- auto vendor
-    for bag = Enum.BagIndex.Backpack, NUM_TOTAL_EQUIPPED_BAG_SLOTS, 1 do
-	for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
-            local noValue = itemInfo and itemInfo.hasNoValue;
-            local quality = itemInfo and itemInfo.quality;
-            if (quality == Enum.ItemQuality.Poor) and not noValue then
-                C_Container.UseContainerItem(bag, slot, nil, MerchantFrame:IsShown() and (MerchantFrame.selectedTab == 2))
+    if not InCombatLockdown() then
+        -- auto vendor
+        for bag = Enum.BagIndex.Backpack, NUM_TOTAL_EQUIPPED_BAG_SLOTS, 1 do
+            for slot = 1, C_Container.GetContainerNumSlots(bag) do
+                local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
+                local noValue = itemInfo and itemInfo.hasNoValue
+                local quality = itemInfo and itemInfo.quality
+                if (quality == Enum.ItemQuality.Poor) and not noValue then
+                    C_Container.UseContainerItem(bag, slot, nil, MerchantFrame:IsShown() and (MerchantFrame.selectedTab == 2))
+                end
             end
         end
-    end
 
-    -- auto repair
-    if CanMerchantRepair() then
-        if GetMoney() > (GetRepairAllCost() or 0) then
-            RepairAllItems()
+        -- auto repair
+        if CanMerchantRepair() then
+            if GetMoney() > (GetRepairAllCost() or 0) then
+                RepairAllItems()
+            end
         end
     end
 end)
