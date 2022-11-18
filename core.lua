@@ -48,7 +48,7 @@ local function createBuffFrames(frame)
     end
 end
 
-hooksecurefunc('CompactUnitFrame_UpdateAll', createBuffFrames)
+hooksecurefunc('CompactUnitFrame_UpdateAuras', createBuffFrames)
 
 -- SECTION: disable world quest UI (still shows on map/minimap)
 TalkingHeadFrame:Reset()
