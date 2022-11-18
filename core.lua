@@ -21,36 +21,53 @@ end)
 
 -- SECTION: better partyframe buffs
 -- more than 3 partyframe buffs, also cooldown text on partyframe buffs
-local function createBuffFrames(frame)
-    if not InCombatLockdown() and frame:GetName() then
-        -- set the buffs location
-        frame.buffFrames[1]:ClearAllPoints()
-        frame.buffFrames[1]:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, -1)
+local function createBuffFrames()
+    local compactPartyFrameChildren = { CompactPartyFrame:GetChildren() }
+    for _, frame in ipairs(compactPartyFrameChildren) do
+        local _, match = string.find(frame:GetName(), 'CompactPartyFrameMember')
+        if match then
+            if frame:GetName() then
+                -- set the buffs location
+                frame.buffFrames[1]:ClearAllPoints()
+                frame.buffFrames[1]:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, -1)
 
-        -- set number of buffs shown to 7, and place them from TOPLEFT to TOPRIGHT
-        local frameName = frame:GetName() .. 'Buff'
-        for i = 1, 7 do
-            -- place or create buff frames
-            if i > 1 then
-                local child = _G[frameName .. i] or CreateFrame('Button', frameName .. i, frame, 'CompactBuffTemplate')
-                child:ClearAllPoints()
-                child:SetPoint('TOPLEFT', _G[frameName .. i - 1], 'TOPRIGHT')
+                -- set number of buffs shown to 7, and place them from TOPLEFT to TOPRIGHT
+                local frameName = frame:GetName() .. 'Buff'
+                for i = 1, 7 do
+                    -- place or create buff frames
+                    if i > 1 then
+                        local child = _G[frameName .. i] or CreateFrame('Button', frameName .. i, frame, 'CompactBuffTemplate')
+                        child:ClearAllPoints()
+                        child:SetPoint('TOPLEFT', _G[frameName .. i - 1], 'TOPRIGHT')
+                    end
+
+                    -- show cooldown numbers, set a resonable size for buffs and font
+                    local currentFrameScale = min(EditModeManagerFrame:GetRaidFrameHeight(frame) / 36, EditModeManagerFrame:GetRaidFrameWidth(frame) / 72)
+                    local buffSize = 14 * currentFrameScale
+                    local fontSize = 8 * currentFrameScale
+                    _G[frameName .. i].cooldown:SetHideCountdownNumbers(false)
+                    _G[frameName .. i].cooldown:GetRegions():SetFont('Fonts\\FRIZQT__.TTF', fontSize, 'OUTLINE')
+                    _G[frameName .. i]:SetSize(buffSize, buffSize)
+                end
+
+                frame.maxBuffs = 7
             end
-
-            -- show cooldown numbers, set a resonable size for buffs and font
-            local currentFrameScale = min(EditModeManagerFrame:GetRaidFrameHeight(frame) / 36, EditModeManagerFrame:GetRaidFrameWidth(frame) / 72)
-            local buffSize = 14 * currentFrameScale
-            local fontSize = 8 * currentFrameScale
-            _G[frameName .. i].cooldown:SetHideCountdownNumbers(false)
-            _G[frameName .. i].cooldown:GetRegions():SetFont('Fonts\\FRIZQT__.TTF', fontSize, 'OUTLINE')
-            _G[frameName .. i]:SetSize(buffSize, buffSize)
         end
-
-        frame.maxBuffs = 7
     end
 end
 
-hooksecurefunc('CompactUnitFrame_SetUpFrame', createBuffFrames)
+local ZarlliBuffFrame = CreateFrame('frame')
+ZarlliBuffFrame:RegisterEvent('GROUP_JOINED')
+ZarlliBuffFrame:RegisterEvent('GROUP_LEFT')
+ZarlliBuffFrame:RegisterEvent('GROUP_ROSTER_UPDATE')
+ZarlliBuffFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
+ZarlliBuffFrame:RegisterEvent('PLAYER_ROLES_ASSIGNED')
+ZarlliBuffFrame:RegisterEvent('UNIT_AURA')
+ZarlliBuffFrame:SetScript('OnEvent', function(self, event)
+    if not InCombatLockdown() then
+        createBuffFrames()
+    end
+end)
 
 -- SECTION: disable world quest UI (still shows on map/minimap)
 -- TalkingHeadFrame:Reset()
