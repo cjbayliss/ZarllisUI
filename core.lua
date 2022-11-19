@@ -63,16 +63,6 @@ ZarlliBuffFrame:SetScript('OnEvent', function(self, event)
     end
 end)
 
--- SECTION: disable world quest UI (still shows on map/minimap)
--- TalkingHeadFrame:Reset()
-WORLD_QUEST_TRACKER_MODULE.ShowWorldQuests = false
-hooksecurefunc('QuestUtils_IsQuestWorldQuest', function()
-    if not InCombatLockdown() then
-        ObjectiveTrackerBonusBannerFrame:Hide()
-        TalkingHeadFrame:CloseImmediately()
-    end
-end)
-
 -- SECTION: auto repair and auto sell junk
 local AutoRepairAndVendorFrame = CreateFrame('frame')
 AutoRepairAndVendorFrame:RegisterEvent('MERCHANT_SHOW')
