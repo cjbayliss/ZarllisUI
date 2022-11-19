@@ -39,7 +39,9 @@ local function createBuffFrames()
                     end
 
                     -- show cooldown numbers, set a resonable size for buffs and font
-                    local currentFrameScale = min(EditModeManagerFrame:GetRaidFrameHeight(frame) / 36, EditModeManagerFrame:GetRaidFrameWidth(frame) / 72)
+                    local raidFrameHeight = EditModeManagerFrame:GetRaidFrameHeight(frame)
+                    local raidFrameWidth = EditModeManagerFrame:GetRaidFrameWidth(frame)
+                    local currentFrameScale = min(raidFrameHeight / 36, raidFrameWidth / 72)
                     local buffSize = 14 * currentFrameScale
                     local fontSize = 8 * currentFrameScale
                     _G[frameName .. i].cooldown:SetHideCountdownNumbers(false)
