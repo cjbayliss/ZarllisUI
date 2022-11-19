@@ -8,13 +8,8 @@ CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA = 0
 CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA = 0
 
 -- SECTION: hide expansion button
-local hideExpansionButton = CreateFrame('frame')
-hideExpansionButton:RegisterEvent('GARRISON_SHOW_LANDING_PAGE')
-hideExpansionButton:SetScript('OnEvent', function(self, event)
-    if not InCombatLockdown() then
-        ExpansionLandingPageMinimapButton:Hide()
-    end
-end)
+ExpansionLandingPageMinimapButton:UnregisterAllEvents()
+ExpansionLandingPageMinimapButton:Hide()
 
 -- SECTION: better partyframe buffs
 -- more than 3 partyframe buffs, also cooldown text on partyframe buffs
