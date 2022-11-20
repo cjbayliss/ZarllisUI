@@ -63,6 +63,21 @@ ZarlliBuffFrame:SetScript('OnEvent', function(self, event)
     end
 end)
 
+-- SECTION: don't announce world quests
+local HideWorldQuestsFrame = CreateFrame('frame')
+HideWorldQuestsFrame:RegisterEvent('QUEST_ACCEPTED')
+HideWorldQuestsFrame:SetScript('OnEvent', function(self, event, ...)
+    if not InCombatLockdown() then
+        questID = ...
+        if QuestUtils_IsQuestWorldQuest(questID) then
+            RunNextFrame(function()
+                ObjectiveTrackerBonusBannerFrame:Hide()
+                TalkingHeadFrame:CloseImmediately()
+            end)
+        end
+    end
+end)
+
 -- SECTION: auto repair and auto sell junk
 local AutoRepairAndVendorFrame = CreateFrame('frame')
 AutoRepairAndVendorFrame:RegisterEvent('MERCHANT_SHOW')
