@@ -1,3 +1,5 @@
+---@diagnostic disable: undefined-global
+
 -- SECTION: show FPS by default
 ToggleFramerate()
 
