@@ -70,7 +70,7 @@ local HideWorldQuestsFrame = CreateFrame('frame')
 HideWorldQuestsFrame:RegisterEvent('QUEST_ACCEPTED')
 HideWorldQuestsFrame:SetScript('OnEvent', function(self, event, ...)
     if not InCombatLockdown() then
-        questID = ...
+        local questID = ...
         if QuestUtils_IsQuestWorldQuest(questID) then
             RunNextFrame(function()
                 ObjectiveTrackerBonusBannerFrame:Hide()
