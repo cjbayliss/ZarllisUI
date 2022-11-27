@@ -1,5 +1,10 @@
 ---@diagnostic disable: undefined-global
 
+-- SECTION: edit mode has a bug that get's blamed on addons
+EditModeManagerFrame:HookScript('OnHide', function()
+    ReloadUI()
+end)
+
 -- SECTION: show FPS by default
 ToggleFramerate()
 
