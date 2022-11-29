@@ -14,10 +14,6 @@ CHAT_FRAME_FADE_TIME = 1
 CHAT_FRAME_TAB_NORMAL_NOMOUSE_ALPHA = 0
 CHAT_FRAME_TAB_SELECTED_NOMOUSE_ALPHA = 0
 
--- SECTION: hide expansion button
-ExpansionLandingPageMinimapButton:UnregisterAllEvents()
-ExpansionLandingPageMinimapButton:Hide()
-
 -- SECTION: better partyframe buffs
 -- more than 3 partyframe buffs, also cooldown text on partyframe buffs
 local function createBuffFrames()
